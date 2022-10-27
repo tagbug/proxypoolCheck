@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Sansui233/proxypool/pkg/healthcheck"
 	"github.com/Sansui233/proxypool/pkg/provider"
+	"github.com/Sansui233/proxypoolCheck/check"
 	"github.com/Sansui233/proxypoolCheck/config"
 	"github.com/Sansui233/proxypoolCheck/internal/cache"
 	"log"
@@ -13,7 +14,7 @@ import (
 var location, _ = time.LoadLocation("PRC")
 
 // Get all usable proxies from proxypool server and set app vars
-func InitApp() error{
+func InitApp() error {
 	// Get proxies from server
 	proxies, err := getAllProxies()
 	if err != nil {
@@ -35,12 +36,12 @@ func InitApp() error{
 	log.Println("Now proceeding health check...")
 
 	// healthcheck settings
-	healthcheck.DelayConn = config.Config.HealthCheckConnection
-	healthcheck.DelayTimeout = time.Duration(config.Config.HealthCheckTimeout) * time.Second
-	healthcheck.SpeedConn = config.Config.SpeedConnection
-	healthcheck.SpeedTimeout = time.Duration(config.Config.SpeedTimeout) * time.Second
+	check.DelayConn = config.Config.HealthCheckConnection
+	check.DelayTimeout = time.Duration(config.Config.HealthCheckTimeout) * time.Second
+	check.SpeedConn = config.Config.SpeedConnection
+	check.SpeedTimeout = time.Duration(config.Config.SpeedTimeout) * time.Second
 
-	proxies = healthcheck.CleanBadProxiesWithGrpool(proxies)
+	proxies = check.CleanBadProxiesWithGrpool(proxies)
 	log.Println("Usable proxy count: ", len(proxies))
 
 	// Save to cache
@@ -65,4 +66,3 @@ func InitApp() error{
 	fmt.Println("Open", config.Config.Domain+":"+config.Config.Port, "to check.")
 	return nil
 }
-

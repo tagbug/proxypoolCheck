@@ -69,16 +69,12 @@ func formatURL(value string) string {
 			url = url[:len(url)-1]
 		}
 	}
-	urls := strings.Split(url, "/")
-	if urls[len(urls)-2] != "clash" {
-		url = url + "/clash/proxies"
-	}
 	return url
 }
 
 // get proxy strings from url
 func getProxies(url string) ([]string, error) {
-	//resp, err := http.Get(url)
+	// resp, err := http.Get(url)
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
@@ -86,12 +82,18 @@ func getProxies(url string) ([]string, error) {
 	}
 
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout:   5 * time.Second,
 		Transport: tr,
 	}
+	count := 1
 	resp, err := client.Get(url)
-	if err != nil {
-		return nil, err
+	for err != nil {
+		if count < config.Config.ServerMaxRetry {
+			resp, err = client.Get(url)
+			count++
+		} else {
+			return nil, err
+		}
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)

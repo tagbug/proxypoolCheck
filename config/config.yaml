@@ -1,6 +1,7 @@
 # proxypool remote server url. Blank for http://127.0.0.1:8080
-server_url: https://example.proxypoolserver.com
 # server_url: https://example.proxypoolserver.com/clash/proxies?type=vmess
+server_url:
+  - 'https://proxies.bihai.cf/clash/proxies'
 
 
 # For your local server
@@ -8,12 +9,15 @@ request: http   # http / https
 domain:         # default: 127.0.0.1
 port:           # default: 80
 
-cron_interval: 15       # default: 15  minutes
+cron_interval: 30       # default: 15  minutes
 show_remote_speed: true # default false
 
-healthcheck_timeout:    # default 5
-healthcheck_connection: # default 100
+healthcheck_timeout:        # default 5
+healthcheck_connection: 200 # default 100
 
-speedtest:              # default false
-speed_connection:       # default 5
+speedtest: true         # default false
+speed_connection: 50    # default 5
 speed_timeout:          # default 10
+
+server_max_retry: 5                           # 连接server_url的最大重试次数，default 1
+healthcheck_test_site: https://t.me/tagbug    # 自定义可用性测试的网址，default https://youtube.com
